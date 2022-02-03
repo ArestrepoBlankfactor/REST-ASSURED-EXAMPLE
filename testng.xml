@@ -4,7 +4,7 @@
     <test verbose="2" preserve-order="true" name="/Users/alejandrorestrepomunoz/Documents/github/Java/DemorestAssured">
         <classes>
             <class name="TestRestAssuredDemo"/>
-            <class name="GoRestDemo"/>
+            <class name="TestGoRestDemo"/>
         </classes>
     </test>
 </suite>
