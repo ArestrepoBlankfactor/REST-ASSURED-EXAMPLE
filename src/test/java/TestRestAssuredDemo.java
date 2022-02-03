@@ -1,7 +1,10 @@
 import com.google.gson.Gson;
 import io.restassured.http.ContentType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import util.Util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,10 +12,12 @@ import java.util.Map;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.CoreMatchers.*;
 
-public class TestRestAssuredDemo {
+public class TestRestAssuredDemo extends Util {
     private static final String EMAIL_OR_USERNAME_MISSING = "Missing email or username";
     private static final String USERS_ENDPOINT = "/users";
     private static final String REGISTER_ENDPOINT = "/register";
+    public static Logger LOGGER = LoggerFactory.getLogger(TestRestAssuredDemo.class);
+
 
     @BeforeClass
     public void setUp() {
@@ -25,11 +30,12 @@ public class TestRestAssuredDemo {
      */
     @Test
     public void testGuestusers() {
-        String bodyResponse = given()
+        given()
                 .when()
                     .get(USERS_ENDPOINT)
-                .then().statusCode(200)
-                    .body("data[1].first_name", equalTo("Janet"))
+                .then()
+                    .statusCode(200)
+                    .body("data[1].first_name", equalTo("Janet")).log().body()
                     .extract().body().asString();
     }
 
@@ -43,14 +49,14 @@ public class TestRestAssuredDemo {
         mapNewUser.put("job", "developer");
 
         String postBodyResponse = given()
-                    .log().all().body(mapNewUser.toString())
+                .log().all().body(mapNewUser.toString())
                 .when()
-                    .post(USERS_ENDPOINT)
+                .post(USERS_ENDPOINT)
                 .then().log().all()
-                    .statusCode(201)
-                    .extract().body().asString();
+                .statusCode(201)
+                .extract().body().asString();
 
-        System.out.println(postBodyResponse);
+        LOGGER.info(postBodyResponse);
     }
 
     /**
@@ -63,14 +69,14 @@ public class TestRestAssuredDemo {
         updateUser.put("name", "morpehus");
         updateUser.put("job", "zion resident");
         String putBodyResponse = given().log().all()
-                    .body(updateUser.toString())
+                .body(updateUser.toString())
                 .when()
-                    .put(USERS_ENDPOINT + ID_USER_UPDATE)
+                .put(USERS_ENDPOINT + ID_USER_UPDATE)
                 .then().log().all()
-                    .statusCode(200)
-                    .extract().body().asString();
+                .statusCode(200)
+                .extract().body().asString();
 
-        System.out.println(putBodyResponse);
+        LOGGER.info(putBodyResponse);
     }
 
     /**
@@ -82,13 +88,13 @@ public class TestRestAssuredDemo {
         queryParameter.put("delay", "10");
 
         String postBodyResponse = given().log().all()
-                    .queryParams(queryParameter)
+                .queryParams(queryParameter)
                 .when()
-                    .get(USERS_ENDPOINT)
+                .get(USERS_ENDPOINT)
                 .then().log().body()
-                    .extract().body().asString();
+                .extract().body().asString();
 
-        System.out.println(postBodyResponse);
+        LOGGER.info(postBodyResponse);
     }
 
     /**
@@ -104,18 +110,18 @@ public class TestRestAssuredDemo {
         String json = gson.toJson(emailAndPasswrod);
 
         String postBodyResponse = given().log().all()
-                    .contentType(ContentType.JSON)
-                    .body(json)
+                .contentType(ContentType.JSON)
+                .body(json)
                 .when()
-                    .post(REGISTER_ENDPOINT)
+                .post(REGISTER_ENDPOINT)
                 .then().log().all()
-                    .assertThat()
-                        .body("id", is(4))
-                    .and()
-                        .body(containsString("token"))
-                    .extract().body().asString();
+                .assertThat()
+                .body("id", is(4))
+                .and()
+                .body(containsString("token"))
+                .extract().body().asString();
 
-        System.out.println(postBodyResponse);
+        LOGGER.info(postBodyResponse);
     }
 
     /**
@@ -125,13 +131,13 @@ public class TestRestAssuredDemo {
     public void testBadRequest() {
         String PosBadRequet = given()
                 .when()
-                    .body("")
-                    .post(REGISTER_ENDPOINT)
+                .body("")
+                .post(REGISTER_ENDPOINT)
                 .then().statusCode(400)
-                    .body("error", equalTo(EMAIL_OR_USERNAME_MISSING))
-                    .extract().response().asString();
+                .body("error", equalTo(EMAIL_OR_USERNAME_MISSING))
+                .extract().response().asString();
 
-        System.out.println(PosBadRequet);
+        LOGGER.info(PosBadRequet);
     }
 
     /**
@@ -141,10 +147,10 @@ public class TestRestAssuredDemo {
     public void testDelete() {
         String deleteResponse = given().
                 when()
-                    .delete(USERS_ENDPOINT + "/2")
+                .delete(USERS_ENDPOINT + "/2")
                 .then()
-                    .statusCode(204).extract().body().toString();
-        System.out.println(deleteResponse);
+                .statusCode(204).extract().body().asString();
+        LOGGER.info(deleteResponse);
 
     }
 
@@ -159,6 +165,6 @@ public class TestRestAssuredDemo {
                 .then().statusCode(404)
                 .extract().response().asString();
 
-        System.out.println(PosBadRequet);
+        LOGGER.info(PosBadRequet);
     }
 }
