@@ -177,3 +177,6 @@ buildNumber.properties
 # reports
 allure-results
 target
+
+#logs
+logs
