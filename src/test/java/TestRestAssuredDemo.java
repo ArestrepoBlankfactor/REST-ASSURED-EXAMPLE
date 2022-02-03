@@ -125,7 +125,7 @@ public class TestRestAssuredDemo extends Util {
     }
 
     /**
-     * validate status code 400(bad request) when send the request without correct body format
+     * validate status code is 400(bad request) when send the request without correct body format
      */
     @Test
     public void testBadRequest() {
