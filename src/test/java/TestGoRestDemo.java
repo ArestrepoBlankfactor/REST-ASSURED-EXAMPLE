@@ -38,6 +38,7 @@ public class TestGoRestDemo extends Util {
                 .post(USERS_ENDPOINT)
                 .then().log().all()
                 .extract().body().asString();
+        LOGGER.info(responseBpody);
     }
 
     /**
@@ -63,7 +64,7 @@ public class TestGoRestDemo extends Util {
      */
     @Test
     public void testJSONSchema() {
-        System.out.println(
+        LOGGER.info(
                 given()
                         .when()
                         .get(USERS_ENDPOINT)
